@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mcp2qmp"
+version = "1.0.0"
+description = "MCP2QMP bridged via Context Forge and SystemT control structures"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    # Hier bei Bedarf Python-Abhängigkeiten eintragen
+]
