@@ -1,20 +1,22 @@
 {
-  "name": "preact-chrome-extension",
+  "name": "mcp2qmp-context-forge-extension",
   "version": "1.0.0",
-  "description": "Chrome Extension mit Preact, Vite und Node 20",
+  "description": "Unified Workspace: Preact Chrome Extension & MCP2QMP Context Forge Gateway",
   "type": "module",
   "engines": {
     "node": ">=20.0.0"
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "gateway:start": "python3 -m mcp_context_forge.gateway --config ./config/gateway.yaml"
   },
   "dependencies": {
     "preact": "^10.20.0"
   },
   "devDependencies": {
     "@preact/preset-vite": "^2.8.0",
-    "vite": "^5.0.0"
+    "vite": "^5.0.0",
+    "vite-plugin-static-copy": "^2.0.0"
   }
 }
