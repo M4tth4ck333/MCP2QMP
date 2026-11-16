@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Preact Extension Demo",
+  "version": "1.0",
+  "description": "Eine Chrome Extension mit Preact und Manifest V3",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "activeTab",
+    "storage"
+  ]
+}
