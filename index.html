@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>MCP2QMP - Unified Sandbox</title>
+    <!-- Preact & htm für UI -->
+    <script src="https://esm.sh/preact@10.20.0"></script>
+    <script src="https://esm.sh/preact@10.20.0/hooks"></script>
+    <script src="https://esm.sh/htm@3.1.1"></script>
+    <!-- Pyodide CDN -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #1e1e1e; color: #d4d4d4; padding: 20px; margin: 0; }
+        .container { max-width: 600px; margin: auto; background: #252526; padding: 20px; border-radius: 8px; border: 1px solid #333; }
+        textarea { width: 100%; height: 120px; background: #1e1e1e; color: #fff; border: 1px solid #444; padding: 10px; font-family: monospace; border-radius: 4px; box-sizing: border-box; }
+        button { background: #007acc; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; font-weight: bold; margin-top: 10px; }
+        button:hover { background: #0098ff; }
+        pre { background: #1e1e1e; padding: 12px; border: 1px solid #444; border-radius: 4px; font-family: monospace; min-height: 40px; }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script type="module">
+        import { h, render } from 'https://esm.sh/preact@10.20.0';
+        import { useState, useEffect } from 'https://esm.sh/preact@10.20.0/hooks';
+        import htm from 'https://esm.sh/htm@3.1.1';
+
+        const html = htm.bind(h);
+
+        function App() {
+            const [pyodide, setPyodide] = useState(null);
+            const [status, setStatus] = useState("Lade Pyodide WebAssembly...");
+            const [code, setCode] = useState(
+`# Teste die Dunder-DSL in Python:
+class QMPPathProxy:
+    def __init__(self, path="$"): self.path = path
+    def __getattr__(self, name): return QMPPathProxy(f"{self.path}.{name}")
+    def __getitem__(self, key): return QMPPathProxy(f"{self.path}[{key}]")
+    def __repr__(self): return f"QueryPath({self.path})"
+
+client_q = QMPPathProxy()
+print("Dot Notation:", client_q.status.running)
+print("Subscript:", client_q["status"]["running"])
+print("Array Index:", client_q.cpus[0].pcpus[0])`
+            );
+            const [output, setOutput] = useState("Warte auf Initialisierung...");
+
+            useEffect(() => {
+                async function initPy() {
+                    try {
+                        let py = await loadPyodide();
+                        setPyodide(py);
+                        setStatus("Pyodide bereit! 🚀");
+                        setOutput("Bereit zur Ausführung.");
+                    } catch (err) {
+                        setStatus("Fehler beim Laden von Pyodide.");
+                        setOutput(err.toString());
+                    }
+                }
+                initPy();
+            }, []);
+
+            async function runPython() {
+                if (!pyodide) return;
+                setOutput("Führe aus...");
+                try {
+                    pyodide.runPython(`
+                        import sys
+                        import io
+                        sys.stdout = io.StringIO()
+                    `);
+                    await pyodide.runPythonAsync(code);
+                    let stdout = pyodide.runPython("sys.stdout.getvalue()");
+                    setOutput(stdout);
+                } catch (err) {
+                    setOutput(err.toString());
+                }
+            }
+
+            return html`
+                <div class="container">
+                    <h2>🚀 MCP2QMP Unified Sandbox</h2>
+                    <p style="font-size: 13px; color: #888;">${status}</p>
+                    
+                    <label>Python Code (Dunder-DSL Test):</label><br/>
+                    <textarea value=${code} onInput=${e => setCode(e.target.value)}></textarea><br/>
+                    <button onClick=${runPython} disabled=${!pyodide}>Code ausführen</button>
+
+                    <h3>Ausgabe:</h3>
+                    <pre>${output}</pre>
+                </div>
+            `;
+        }
+
+        render(html`<${App} />`, document.getElementById('app'));
+    </script>
+</body>
+</html>
