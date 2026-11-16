@@ -18,11 +18,13 @@ graph TD
     A[LLM / MCP Client] -->|Dunder / ORM Call| B(MCPQMPClient)
     B -->|QMP JSON Commands| C[(QEMU Monitor Socket)]
     C -->|Zustandsdaten| B
-    B -->|Geprüfte Python-Objekte| AHier ist eine stark aufgewertete Version deiner `README.md`. Sie enthält ansprechende **Badges & Hooks** direkt am Anfang sowie ein technisches **Mermaid-Diagramm** (als saubere Architektur-Grafik, die direkt auf GitHub gerendert wird) und strukturierte Code-Beispiele.
-
+    B -->|Geprüfte Python-Objekte| AHier ist eine stark aufgewertete Version deiner `README.md`.
+Sie enthält ansprechende **Badges & Hooks** direkt am Anfang sowie ein technisches **Mermaid-Diagramm** (als saubere Architektur-Grafik, die direkt auf GitHub gerendert wird)
+und strukturierte Code-Beispiele.
 Kopiere diesen Inhalt einfach in deine `README.md`:
 
-```markdown
+```
+markdown
 # MCP2QMP 🚀
 
 [![Python Version](https://img.shields.io/badge/python-3.10%2B-blue.svg)](https://www.python.org/)
